@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IIFL Smart Connect</title>
+    <!-- Link to the new external CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Top Progress Loading Bar -->
+    <div id="loadingBar" style="position: fixed; top: 0; left: 0; height: 3px; background: #f05a28; width: 0%; z-index: 99999; transition: width 0.2s ease, opacity 0.2s ease; opacity: 0;"></div>
+
+    <!-- Notification Toast Container -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Login Screen -->
+    <div class="app-container" id="loginContainer">
+        <img src="logo.png" alt="IIFL Logo" class="app-logo">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="loginId">Email or Username</label>
+            <input type="text" id="loginId" placeholder="Enter Email or Username">
+        </div>
+        <div class="form-group" style="margin-bottom: 8px;">
+            <label for="loginPassword">Password</label>
+            <div style="position: relative;">
+                <input type="password" id="loginPassword" placeholder="Enter Password" style="padding-right: 40px;">
+                <span id="togglePassword" onclick="togglePasswordVisibility()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 13px; font-weight: 600; color: #181b5b;" title="Show Password">Show</span>
+            </div>
+        </div>
+        <p style="text-align: right; margin-top: -5px; margin-bottom: 15px;">
+            <a href="#" onclick="openForgotModal()" style="color: #f05a28; font-size: 12px; text-decoration: none; font-weight: 600;">Forgot Password?</a>
+        </p>
+        <button class="btn" style="background-color: #f05a28;" onclick="handleLogin()">Login</button>
+        <div class="footer" style="margin-top: 25px; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+            Designed & Developed by <span style="color: #f05a28; font-weight: 700;">LN Digital</span>
+        </div>
+    </div>
+
+    <!-- Super Admin Panel (Hidden by default) -->
+    <div class="app-container" id="adminContainer" style="display: none;">
+        <img src="logo.png" alt="IIFL Logo" class="app-logo">
+        <h2>Super Admin Panel</h2>
+        
+        <!-- Tabs for Super Admin -->
+        <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #181b5b;" onclick="switchSuperAdminTab('overview')">Overview</button>
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #6c757d;" onclick="switchSuperAdminTab('manage')">Manage</button>
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #6c757d;" onclick="switchSuperAdminTab('logs')">Logs</button>
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #6c757d;" onclick="switchSuperAdminTab('settings')">Settings</button>
+        </div>
+
+        <!-- Super Admin Tab 1: Overview -->
+        <div id="sa-tab-overview">
+            <p style="text-align: center; color: #f05a28; font-weight: bold; margin-bottom: 15px;">System Overview</p>
+            <div id="sa-metrics" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                <!-- Metrics will be dynamically rendered here -->
+            </div>
+            <div id="sa-charts" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                <p style="font-weight: bold; font-size: 13px; color: #181b5b; margin-bottom: 8px;">User Distribution</p>
+                <div id="sa-distribution-chart" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Super Admin Tab 2: Manage Accounts (Original Form & List) -->
+        <div id="sa-tab-manage" style="display: none;">
+            <p style="text-align: center; color: #f05a28; font-weight: bold; margin-bottom: 15px;">Onboard New Account</p>
+            <div class="form-group">
+                <label for="newEmployeeId">Account Login ID</label>
+                <input type="text" id="newEmployeeId" placeholder="e.g. rahul01 or admin_vaishali">
+            </div>
+            <div class="form-group">
+                <label for="newEmployeePass">Account Password</label>
+                <input type="text" id="newEmployeePass" placeholder="Enter Password">
+            </div>
+            <div class="form-group">
+                <label for="newEmployeeName">Full Name</label>
+                <input type="text" id="newEmployeeName" placeholder="Enter Full Name">
+            </div>
+            <div class="form-group">
+                <label for="newEmployeePhone">Phone Number</label>
+                <input type="tel" id="newEmployeePhone" placeholder="Enter Phone Number">
+            </div>
+            <div class="form-group">
+                <label for="newEmployeeEmail">Email ID</label>
+                <input type="email" id="newEmployeeEmail" placeholder="Enter Email ID">
+            </div>
+            <div class="form-group">
+                <label for="newEmployeeBranch">Select Branch</label>
+                <select id="newEmployeeBranch" onchange="handleBranchSelection()">
+                    <option value="">-- Select a Branch --</option>
+                    <option value="jagatpura">Jagatpura Branch</option>
+                    <option value="vaishali">Vaishali Nagar Branch</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="newEmployeeAddress">Office Address</label>
+                <input type="text" id="newEmployeeAddress" placeholder="Enter Office Address">
+            </div>
+            <div class="form-group">
+                <label for="newEmployeeMapLink">Google Map Link</label>
+                <input type="url" id="newEmployeeMapLink" placeholder="Enter Google Map URL">
+            </div>
+            <button class="btn" style="background-color: #28a745;" onclick="addNewEmployee()">Add New Account</button>
+            
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0 15px 0;">
+            <h3 style="text-align: center; color: #333; font-size: 16px; margin-top: 0;">Existing Accounts (<span id="totalEmployeesCount">0</span>)</h3>
+            
+            <!-- Filters & Search for Accounts -->
+            <div style="display: flex; gap: 6px; margin-bottom: 15px;">
+                <input type="text" id="saEmpSearch" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 12px;" oninput="handleSaEmpFilter()">
+                <select id="saEmpRoleFilter" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 12px;" onchange="handleSaEmpFilter()">
+                    <option value="">All Roles</option>
+                    <option value="admin">Admins</option>
+                    <option value="employee">Employees</option>
+                </select>
+                <select id="saEmpStatusFilter" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 12px;" onchange="handleSaEmpFilter()">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="suspended">Suspended</option>
+                </select>
+            </div>
+            
+            <div id="employeeListContainer" class="agent-list">
+                <!-- Employees list dynamically generated here -->
+            </div>
+        </div>
+
+        <!-- Super Admin Tab 3: Activity Logs & History -->
+        <div id="sa-tab-logs" style="display: none;">
+            <p style="text-align: center; color: #f05a28; font-weight: bold; margin-bottom: 10px;">Recent Activity Logs</p>
+            <div id="sa-logs-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; padding: 8px; border-radius: 6px; font-size: 11px; margin-bottom: 20px; background-color: #fafafa;">
+                <!-- Logs rendered dynamically -->
+            </div>
+            <p style="text-align: center; color: #f05a28; font-weight: bold; margin-bottom: 10px;">Login History</p>
+            <div id="sa-history-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; padding: 8px; border-radius: 6px; font-size: 11px; background-color: #fafafa;">
+                <!-- History rendered dynamically -->
+            </div>
+        </div>
+
+        <!-- Super Admin Tab 4: Settings & Database Management -->
+        <div id="sa-tab-settings" style="display: none;">
+            <p style="text-align: center; color: #f05a28; font-weight: bold; margin-bottom: 15px;">System & Database Settings</p>
+            
+            <!-- Reset Password Form -->
+            <div style="border: 1px solid #eee; padding: 12px; border-radius: 8px; margin-bottom: 15px; background-color: #fcfcfc;">
+                <p style="font-weight: bold; font-size: 13px; color: #181b5b; margin: 0 0 10px 0;">Reset User Password</p>
+                <div class="form-group">
+                    <input type="text" id="resetPassUserId" placeholder="Enter User ID" style="margin-bottom: 8px; width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                    <input type="password" id="resetPassNewPwd" placeholder="Enter New Password" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
+                <button class="btn" style="background-color: #ffc107; color: #000; margin: 0; width: 100%;" onclick="adminResetPassword()">Reset Password</button>
+            </div>
+
+            <!-- Suspend / Activate Form -->
+            <div style="border: 1px solid #eee; padding: 12px; border-radius: 8px; margin-bottom: 15px; background-color: #fcfcfc;">
+                <p style="font-weight: bold; font-size: 13px; color: #181b5b; margin: 0 0 10px 0;">Suspend / Activate Account</p>
+                <div class="form-group">
+                    <input type="text" id="toggleStatusUserId" placeholder="Enter User ID" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
+                <button class="btn" style="background-color: #dc3545; margin: 0; width: 100%;" onclick="adminToggleStatus()">Toggle Account Status</button>
+            </div>
+
+            <!-- Export Database -->
+            <button class="btn" style="background-color: #17a2b8;" onclick="adminExportDatabase()">Export Database Data</button>
+        </div>
+
+        <button class="btn" style="background-color: #181b5b; margin-top: 25px;" onclick="handleLogout()">Logout</button>
+    </div>
+
+    <!-- Admin Dashboard Panel (Hidden by default) -->
+    <div class="app-container" id="adminDashboardContainer" style="display: none;">
+        <img src="logo.png" alt="IIFL Logo" class="app-logo">
+        <h2>Admin Dashboard</h2>
+        
+        <!-- Tabs for Admin -->
+        <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #181b5b;" onclick="switchAdminTab('overview')">Overview</button>
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #6c757d;" onclick="switchAdminTab('manage')">Employees</button>
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #6c757d;" onclick="switchAdminTab('tasks')">Assign Task</button>
+        </div>
+
+        <!-- Admin Tab 1: Overview -->
+        <div id="ad-tab-overview">
+            <p style="text-align: center; color: #007bff; font-weight: bold; margin-bottom: 15px;">Assigned Branch Status</p>
+            <div id="ad-metrics" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                <!-- Admin metrics rendered dynamically -->
+            </div>
+            
+            <p style="font-weight: bold; font-size: 13px; color: #181b5b; margin-bottom: 8px;">Active Projects</p>
+            <div id="ad-projects-list" class="agent-list" style="margin-bottom: 20px;">
+                <!-- Projects rendered dynamically -->
+            </div>
+        </div>
+
+        <!-- Admin Tab 2: Employee Management (Onboard & List) -->
+        <div id="ad-tab-manage" style="display: none;">
+            <p style="text-align: center; color: #007bff; font-weight: bold; margin-bottom: 15px;">Onboard New Employee</p>
+            <div class="form-group">
+                <label for="adNewEmpId">Employee Login ID</label>
+                <input type="text" id="adNewEmpId" placeholder="e.g. rahul01">
+            </div>
+            <div class="form-group">
+                <label for="adNewEmpPass">Employee Password</label>
+                <input type="text" id="adNewEmpPass" placeholder="Enter Password">
+            </div>
+            <div class="form-group">
+                <label for="adNewEmpName">Full Name</label>
+                <input type="text" id="adNewEmpName" placeholder="Enter Full Name">
+            </div>
+            <div class="form-group">
+                <label for="adNewEmpPhone">Phone Number</label>
+                <input type="tel" id="adNewEmpPhone" placeholder="Enter Phone Number">
+            </div>
+            <div class="form-group">
+                <label for="adNewEmpEmail">Email ID</label>
+                <input type="email" id="adNewEmpEmail" placeholder="Enter Email ID">
+            </div>
+            <button class="btn" style="background-color: #28a745;" onclick="adminAddEmployee()">Add New Employee</button>
+            
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0 15px 0;">
+            <h3 style="text-align: center; color: #333; font-size: 16px; margin-top: 0;">Existing Employees (<span id="adTotalEmployeesCount">0</span>)</h3>
+            <div id="adEmployeeListContainer" class="agent-list">
+                <!-- Employees list dynamically generated here -->
+            </div>
+        </div>
+
+        <!-- Admin Tab 3: Assign Tasks -->
+        <div id="ad-tab-tasks" style="display: none;">
+            <p style="text-align: center; color: #007bff; font-weight: bold; margin-bottom: 15px;">Assign New Task</p>
+            <div class="form-group">
+                <label for="taskAssignee">Assign To (Employee ID)</label>
+                <input type="text" id="taskAssignee" placeholder="Enter Employee ID">
+            </div>
+            <div class="form-group">
+                <label for="taskTitle">Task Title</label>
+                <input type="text" id="taskTitle" placeholder="e.g. Visit Jagatpura Builder">
+            </div>
+            <div class="form-group">
+                <label for="taskDesc">Task Description</label>
+                <input type="text" id="taskDesc" placeholder="Enter Description Details">
+            </div>
+            <button class="btn" style="background-color: #2563eb;" onclick="assignNewTask()">Assign Task</button>
+            
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0 15px 0;">
+            <h3 style="text-align: center; color: #333; font-size: 16px; margin-top: 0;">Recent Tasks</h3>
+            <div id="adTasksListContainer" class="agent-list">
+                <!-- Tasks list dynamically generated here -->
+            </div>
+        </div>
+
+        <button class="btn" style="background-color: #181b5b; margin-top: 25px;" onclick="handleLogout()">Logout</button>
+    </div>
+
+    <!-- Employee Dashboard Panel (Main App Screen / Hidden by default) -->
+    <div class="app-container" id="mainAppContainer" style="display: none;">
+        <img src="logo.png" alt="IIFL Logo" class="app-logo">
+        <h2>Employee Dashboard</h2>
+        <p id="welcomeMessage" style="text-align: center; color: #007bff; font-weight: bold; margin-bottom: 15px;"></p>
+        
+        <!-- Tabs for Employee -->
+        <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #181b5b;" onclick="switchEmployeeTab('messages')">Messages</button>
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #6c757d;" onclick="switchEmployeeTab('tasks')">Tasks</button>
+            <button class="btn" style="padding: 8px 5px; font-size: 11px; margin: 0; background-color: #6c757d;" onclick="switchEmployeeTab('profile')">Profile</button>
+        </div>
+
+        <!-- Employee Tab 1: Send Messages (Original Client Sender Form) -->
+        <div id="emp-tab-messages">
+            <div class="form-group">
+                <label for="clientName">Client Name</label>
+                <input type="text" id="clientName" placeholder="Enter Client Name">
+            </div>
+
+            <div class="form-group">
+                <label for="clientPhone">WhatsApp Number</label>
+                <input type="tel" id="clientPhone" placeholder="Enter WhatsApp Number">
+            </div>
+
+            <div class="form-group">
+                <label for="clientEmail">Client Email ID</label>
+                <input type="email" id="clientEmail" placeholder="Enter Email ID">
+            </div>
+
+            <div class="form-group">
+                <label for="clientPersonType">Person Type</label>
+                <select id="clientPersonType">
+                    <option value="">-- Select Person Type --</option>
+                    <option value="Builder">Builder</option>
+                    <option value="Property Dealer">Property Dealer</option>
+                    <option value="DSA">DSA</option>
+                    <option value="Banker">Banker</option>
+                    <option value="Individual">Individual</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="clientAddress">Meeting Location / Client Address</label>
+                <input type="text" id="clientAddress" placeholder="Enter Meeting Location">
+            </div>
+
+            <button class="btn btn-whatsapp" onclick="sendWhatsApp()">Send WhatsApp</button>
+            <button class="btn btn-email" onclick="sendEmail()">Send Email</button>
+            
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0 15px 0;">
+            <h3 style="text-align: center; color: #333; font-size: 16px; margin-top: 0;">Daily Report</h3>
+            <button class="btn" style="background-color: #28a745;" onclick="downloadReport()">Download Daily Report</button>
+            <button class="btn" style="background-color: #dc3545; margin-top: 10px;" onclick="clearReportData()">Clear Saved Data</button>
+        </div>
+
+        <!-- Employee Tab 2: Tasks & Attendance -->
+        <div id="emp-tab-tasks" style="display: none;">
+            <!-- Attendance Section -->
+            <div style="border: 1px solid #eee; padding: 12px; border-radius: 8px; margin-bottom: 20px; background-color: #fcfcfc;">
+                <p style="font-weight: bold; font-size: 13px; color: #181b5b; margin: 0 0 10px 0;">Daily Attendance</p>
+                <button class="btn" style="background-color: #28a745; margin: 0;" id="attendanceBtn" onclick="markAttendance()">Mark Present Today</button>
+            </div>
+
+            <!-- Tasks List -->
+            <p style="font-weight: bold; font-size: 13px; color: #181b5b; margin-bottom: 8px;">My Assigned Tasks</p>
+            <div id="empTasksListContainer" class="agent-list" style="margin-bottom: 20px;">
+                <!-- Tasks rendered dynamically -->
+            </div>
+
+            <!-- Notifications -->
+            <p style="font-weight: bold; font-size: 13px; color: #181b5b; margin-bottom: 8px;">Notifications</p>
+            <div id="empNotificationsContainer" style="max-height: 150px; overflow-y: auto; border: 1px solid #eee; padding: 8px; border-radius: 6px; font-size: 11px; background-color: #fafafa;">
+                <!-- Notifications rendered dynamically -->
+            </div>
+        </div>
+
+        <!-- Employee Tab 3: Profile Management & Password Change -->
+        <div id="emp-tab-profile" style="display: none;">
+            <p style="text-align: center; color: #181b5b; font-weight: bold; margin-bottom: 15px;">Update Profile Information</p>
+            <div class="form-group">
+                <label for="empProfileName">Full Name</label>
+                <input type="text" id="empProfileName">
+            </div>
+            <div class="form-group">
+                <label for="empProfileEmail">Email ID</label>
+                <input type="email" id="empProfileEmail">
+            </div>
+            <div class="form-group">
+                <label for="empProfilePhone">Phone Number</label>
+                <input type="tel" id="empProfilePhone">
+            </div>
+            <button class="btn" style="background-color: #007bff;" onclick="updateUserProfile()">Update Profile</button>
+            
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0 15px 0;">
+            <p style="text-align: center; color: #181b5b; font-weight: bold; margin-bottom: 15px;">Change Password</p>
+            <div class="form-group">
+                <label for="empOldPassword">Current Password</label>
+                <input type="password" id="empOldPassword" placeholder="Enter Current Password">
+            </div>
+            <div class="form-group">
+                <label for="empNewPassword">New Password</label>
+                <input type="password" id="empNewPassword" placeholder="Enter New Password">
+            </div>
+            <button class="btn" style="background-color: #dc3545;" onclick="changeUserPassword()">Update Password</button>
+        </div>
+
+        <button class="btn" style="background-color: #181b5b; margin-top: 25px;" onclick="handleLogout()">Logout</button>
+        <div class="footer" style="border-top: 1px solid #e5e7eb; padding-top: 15px;">
+            Designed & Developed by <span style="color: #f05a28; font-weight: 700;">LN Digital</span>
+        </div>
+    </div>
+
+    <!-- Link to the external JavaScript file -->
+    <script src="script.js" charset="UTF-8"></script>
+
+    <!-- Language Selection Modal (Hidden by Default) -->
+    <div id="languageModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3 style="margin-top: 0; color: #181b5b; margin-bottom: 10px;">Select Language</h3>
+            <p style="color: #555; font-size: 14px; margin-bottom: 20px;">Choose a language for the WhatsApp message:</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn" style="background-color: #007bff; margin: 0;" onclick="confirmSendWhatsApp('english')">English Message</button>
+                <button class="btn" style="background-color: #28a745; margin: 0;" onclick="confirmSendWhatsApp('hindi')">हिन्दी Message</button>
+                <button class="btn" style="background-color: #dc3545; margin: 0; margin-top: 5px;" onclick="closeLanguageModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal (Hidden by Default) -->
+    <div id="forgotModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 350px;">
+            <h3 style="margin-top: 0; color: #181b5b; margin-bottom: 10px;">Reset Password</h3>
+            <p style="color: #555; font-size: 13px; margin-bottom: 15px;">Enter your email to receive a password reset code.</p>
+            
+            <div id="forgot-step-1">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <input type="email" id="forgotEmail" placeholder="Enter Email ID" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
+                <button class="btn" style="background-color: #f05a28; margin: 0; width: 100%;" onclick="sendForgotCode()">Get Reset Code</button>
+            </div>
+            
+            <div id="forgot-step-2" style="display: none;">
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <input type="text" id="forgotUsername" placeholder="Enter Username" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <input type="text" id="forgotCode" placeholder="Enter 6-Digit Code" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <input type="password" id="forgotNewPassword" placeholder="Enter New Password" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                </div>
+                <button class="btn" style="background-color: #28a745; margin: 0; width: 100%;" onclick="submitResetPassword()">Update Password</button>
+            </div>
+            
+            <button class="btn" style="background-color: #6c757d; margin: 10px 0 0 0; width: 100%;" onclick="closeForgotModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Edit User Modal (Hidden by Default) -->
+    <div id="editUserModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; max-height: 85vh; overflow-y: auto;">
+            <h3 style="margin-top: 0; color: #181b5b; margin-bottom: 15px;">Edit Account Details</h3>
+            <input type="hidden" id="editUserId">
+            <div class="form-group">
+                <label for="editUserName">Full Name</label>
+                <input type="text" id="editUserName" placeholder="Enter Full Name">
+            </div>
+            <div class="form-group">
+                <label for="editUserEmail">Email ID</label>
+                <input type="email" id="editUserEmail" placeholder="Enter Email ID">
+            </div>
+            <div class="form-group">
+                <label for="editUserPhone">Phone Number</label>
+                <input type="tel" id="editUserPhone" placeholder="Enter Phone Number">
+            </div>
+            <div class="form-group">
+                <label for="editUserDept">Department</label>
+                <input type="text" id="editUserDept" placeholder="e.g. Sales, Marketing">
+            </div>
+            <div class="form-group">
+                <label for="editUserDesig">Designation</label>
+                <input type="text" id="editUserDesig" placeholder="e.g. Executive, Manager">
+            </div>
+            <div class="form-group" id="editUserRoleGroup">
+                <label for="editUserRole">Role</label>
+                <select id="editUserRole" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                    <option value="employee">Employee</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editUserStatus">Status</label>
+                <select id="editUserStatus" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                    <option value="active">Active</option>
+                    <option value="suspended">Suspended</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editUserPhoto">Profile Photo</label>
+                <input type="file" id="editUserPhoto" accept="image/*" style="padding: 5px 0; border: none; background: none;">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="background-color: #28a745; margin: 0; flex-grow: 1;" onclick="saveEditedUser()">Save Changes</button>
+                <button class="btn" style="background-color: #6c757d; margin: 0; flex-grow: 1;" onclick="closeEditUserModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Details Modal (Hidden by Default) -->
+    <div id="employeeDetailsModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <h3 style="margin-top: 0; color: #181b5b; margin-bottom: 15px;">Employee Profile</h3>
+            <img id="detailProfileImg" src="logo.png" alt="Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #181b5b; margin-bottom: 15px;">
+            
+            <div style="text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                <div><strong>Full Name:</strong> <span id="detailName"></span></div>
+                <div><strong>Employee ID:</strong> <span id="detailId"></span></div>
+                <div><strong>Email ID:</strong> <span id="detailEmail"></span></div>
+                <div><strong>Phone Number:</strong> <span id="detailPhone"></span></div>
+                <div><strong>Department:</strong> <span id="detailDept"></span></div>
+                <div><strong>Designation:</strong> <span id="detailDesig"></span></div>
+                <div><strong>Status:</strong> <span id="detailStatus"></span></div>
+                <div><strong>Joining Date:</strong> <span id="detailJoining"></span></div>
+                <div><strong>Last Login:</strong> <span id="detailLastLogin"></span></div>
+            </div>
+            
+            <button class="btn" style="background-color: #6c757d; margin: 0; width: 100%;" onclick="closeEmployeeDetailsModal()">Close</button>
+        </div>
+    </div>
+
+</body>
+</html>
+

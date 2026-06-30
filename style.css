@@ -1,0 +1,266 @@
+/* CSS: App ka Design */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #0d0f35 0%, #181b5b 50%, #2a2d7c 100%); /* Richer IIFL Dark Blue */
+    background-attachment: fixed;
+    margin: 0;
+    padding: 20px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+.app-container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    margin: auto;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.6s ease-out;
+}
+.app-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #f05a28, #ff8c42);
+}
+h2 {
+    text-align: center;
+    color: #181b5b;
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -0.5px;
+}
+.form-group {
+    margin-bottom: 22px;
+}
+label {
+    display: block;
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+input, select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #1f2937;
+    box-sizing: border-box;
+    outline: none;
+    background-color: #f9fafb;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+input:focus, select:focus {
+    border-color: #f05a28; /* IIFL Orange */
+    box-shadow: 0 0 0 4px rgba(240, 90, 40, 0.1);
+    background-color: #ffffff;
+}
+input::placeholder {
+    color: #9ca3af;
+}
+.btn {
+    width: 100%;
+    padding: 15px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #f05a28, #d94a1d); /* Default Primary Button */
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+.btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+.btn-whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+}
+.btn-email {
+    background: linear-gradient(135deg, #EA4335, #C5221F);
+}
+.footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 13px;
+    color: #9ca3af;
+}
+.app-logo {
+    max-width: 160px;
+    display: block;
+    margin: 0 auto 20px auto;
+}
+
+/* Notification Toast Styling */
+.notification {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    z-index: 1000;
+    transform: translateX(150%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.notification.show {
+    transform: translateX(0);
+}
+.notification.success {
+    background-color: #28a745; /* Green */
+}
+.notification.error {
+    background-color: #dc3545; /* Red */
+}
+.notification.info {
+    background-color: #17a2b8; /* Blue */
+}
+
+/* Agent List Styling */
+.agent-list {
+    max-height: 250px;
+    overflow-y: auto;
+    border-radius: 12px;
+    padding: 5px;
+}
+.agent-list::-webkit-scrollbar {
+    width: 6px;
+}
+.agent-list::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 10px;
+}
+.agent-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1; 
+    border-radius: 10px;
+}
+.agent-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8; 
+}
+.agent-item {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 5px solid #f05a28;
+    margin-bottom: 12px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.agent-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+}
+.agent-item strong {
+    display: block;
+    color: #181b5b;
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+.agent-item span {
+    color: #6b7280;
+    font-size: 13px;
+}
+.btn-action-group {
+    display: flex;
+    gap: 5px;
+}
+.btn-delete-small {
+    background-color: #ffeaea;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    border-radius: 4px;
+    padding: 6px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-delete-small:hover {
+    background-color: #dc3545;
+}
+.btn-download-small {
+    background-color: #e6f2ff;
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    padding: 6px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-download-small:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Modal Styling */
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes modalScaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(16, 18, 59, 0.7);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: modalFadeIn 0.3s ease-out;
+}
+.modal-content {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 350px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    animation: modalScaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center;
+}
